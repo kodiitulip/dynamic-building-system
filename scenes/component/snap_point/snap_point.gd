@@ -18,13 +18,14 @@ func is_colliding() -> bool:
 
 
 func handle_raycast() -> void:
+	if not is_colliding() || connected_component != null:
+		return
 	var collision_body: CollisionObject2D = ray_cast.get_collider()
 	var snap_point: SnapPoint = collision_body.owner
 	var connecting_component: Component = snap_point.owner
-
 	connecting_component.attach_component(
 		(owner as Component),
-		snap_point.global_position + snap_point.position
+		snap_point.position * 2
 	)
 
 	connected_component = connecting_component

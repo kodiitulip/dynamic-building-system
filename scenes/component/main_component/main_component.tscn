@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtmm8tlvko4vm"]
+
+[ext_resource type="PackedScene" uid="uid://bxgtiwlbed7lr" path="res://scenes/component/component.tscn" id="1_ebj23"]
+[ext_resource type="Script" path="res://scenes/component/main_component/main_component.gd" id="2_hot3f"]
+
+[node name="MainComponent" instance=ExtResource("1_ebj23")]
+script = ExtResource("2_hot3f")
+thrust = 150.0
+torque = 500.0
+current_state = 0
