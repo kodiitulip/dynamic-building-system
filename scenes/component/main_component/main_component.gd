@@ -9,8 +9,7 @@ enum ShipState {
 
 @export var thrust: float = 150
 @export var torque: float = 500.0
-@export var current_state: ShipState = ShipState.FLYING:
-	set = _set_current_state
+@export var current_state: ShipState = ShipState.FLYING
 
 
 func _integrate_forces(_state: PhysicsDirectBodyState2D) -> void:
@@ -34,5 +33,13 @@ func _flying_state() -> void:
 		apply_force(input_direction.rotated(rotation) * thrust)
 
 
-func _set_current_state(state: ShipState) -> void:
-	current_state = state
+func set_state_to_building() -> void:
+	current_state = ShipState.BUILDING
+	click_area.input_pickable = true
+	set_state_to_idle()
+
+
+func set_state_to_flying() -> void:
+	current_state = ShipState.FLYING
+	click_area.input_pickable = false
+	set_state_to_dead()

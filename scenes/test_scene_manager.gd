@@ -24,8 +24,8 @@ func get_all_components(node: Node) -> Array[Component]:
 
 
 func _on_build_pressed() -> void:
-	main_component.current_state = MainComponent.ShipState.BUILDING
+	main_component.set_state_to_building()
 
 
 func _on_fly_pressed() -> void:
-	main_component.current_state = MainComponent.ShipState.FLYING
+	main_component.set_state_to_flying()

@@ -1,9 +1,10 @@
 class_name Component
 extends RigidBody2D
 
+## The component's State enum
 enum ComponentState {
 	IDLE,
-	GRABING,
+	GRAB,
 	DEAD,
 }
 
@@ -12,8 +13,11 @@ var component_state: ComponentState = ComponentState.DEAD:
 var snap_points: Array[SnapPoint]
 var parent_component: Component
 
+@onready var click_area: Area2D = $ClickableArea
+
 
 func _ready() -> void:
+	click_area.input_event.connect(_on_area_input_event)
 	snap_points.append_array($SnapPoints.get_children().filter(
 		func(child: Node) -> bool: return child is SnapPoint))
 	for point: SnapPoint in snap_points:
@@ -25,7 +29,7 @@ func _process(_delta: float) -> void:
 		ComponentState.IDLE:
 			pass
 
-		ComponentState.GRABING:
+		ComponentState.GRAB:
 			position = get_global_mouse_position()
 			for point: SnapPoint in snap_points:
 				point.handle_raycast()
@@ -64,15 +68,12 @@ func set_state_to_dead() -> void:
 
 
 func set_state_to_grab() -> void:
-	component_state = ComponentState.GRABING
+	component_state = ComponentState.GRAB
 
 
 func _set_state_to(state: ComponentState) -> void:
 	component_state = state
 	freeze = state != ComponentState.DEAD
-	if not parent_component and state == ComponentState.IDLE:
-		await get_tree().create_timer(1).timeout
-		set_state_to_dead()
 
 
 func _trigger_snap_points(enable: bool) -> void:
@@ -89,12 +90,13 @@ func _on_snap_points_component_connected(component: Component) -> void:
 	set_state_to_idle()
 
 
-func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int
-		) -> void:
+func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if not event is InputEventMouseButton:
 		return
 	if event.is_pressed():
 		set_state_to_grab()
+	elif not parent_component:
+		set_state_to_dead()
 	else:
 		set_state_to_idle()
 	_trigger_snap_points(event.is_pressed())
